@@ -1,7 +1,8 @@
 from hoshino import Service
 from hoshino.typing import CQEvent
 from hoshino.modules.priconne import chara
-from . import _chara_data
+#from . import _chara_data
+from . import unitdata
 
 import datetime
 import hoshino
@@ -30,7 +31,7 @@ def get_cqcode(chara_id):
 
 @bdrm.scheduled_job('cron', hour='00', minute='01')
 async def birthday_reminder():
-    chara_id_list = list(_chara_data.CHARA_DATA.keys())
+    chara_id_list = list(unitdata.unit_profile.keys())
     month = datetime.datetime.now().month
     day = datetime.datetime.now().day
     birthdate = str(month)+'月' + str(day) + '日'
@@ -39,7 +40,7 @@ async def birthday_reminder():
     #birthdate = '2月2日'
     birthday_chara_id_lst = []
     for i in range(len(chara_id_list)):
-        if _chara_data.CHARA_DATA[chara_id_list[i]][2] == birthdate:
+        if unitdata.unit_profile[chara_id_list[i]]['生日'] == birthdate:
             birthday_chara_id_lst.append(chara_id_list[i])
     ninsuu = len(birthday_chara_id_lst)
     if ninsuu == 0:
@@ -63,7 +64,7 @@ async def birthday_search_chara(bot, ev: CQEvent):
     if chara_id == chara.UNKNOWN:
         chara_id, guess_name, confi = chara.guess_id(name)
     if confi > 60:
-        chara_birthday = _chara_data.CHARA_DATA[chara_id][2]
+        chara_birthday = unitdata.unit_profile[chara_id]['生日']
         if not chara_birthday:
             await bot.send(ev, '没有找到角色的生日信息呢。。。')
             return
@@ -73,7 +74,7 @@ async def birthday_search_chara(bot, ev: CQEvent):
 
 @svbdsrh.on_prefix(('谁的生日','谁生日'))
 async def birthday_search_date(bot, ev: CQEvent):
-    chara_id_list = list(_chara_data.CHARA_DATA.keys())
+    chara_id_list = list(unitdata.unit_profile.keys())
     birthdate = ev['raw_message'].replace("谁的生日", "").replace("过", "").replace("在", "").replace("谁生日", "").replace("号", "日").replace("的", "").replace("生日", "").replace("-", "").replace("是", "").replace(" ","").replace("？","")
     #检测并转换生日格式
     if re.match(r"([01][0-9][0123][0-9])",birthdate):
@@ -93,7 +94,7 @@ async def birthday_search_date(bot, ev: CQEvent):
         return
     birthday_chara_id_lst = []
     for i in range(len(chara_id_list)):
-        if _chara_data.CHARA_DATA[chara_id_list[i]][2] == birthdate:
+        if unitdata.unit_profile[chara_id_list[i]]['生日'] == birthdate:
             birthday_chara_id_lst.append(chara_id_list[i])
     ninsuu = len(birthday_chara_id_lst)
     if ninsuu == 0:
