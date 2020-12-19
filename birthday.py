@@ -163,7 +163,7 @@ async def birthday_search_date(bot, ev):
             msg = msg + f'{name}ちゃん{cqcode}在{birthdate}过生日哦~\n'
         await bot.send(ev, msg)
 
-@sv.on_fullmatch(UPDATE_LOCAL_DATA)
+@svbdsrh.on_fullmatch(UPDATE_LOCAL_DATA)
 async def birthday_update_local_data(bot, ev):
     if priv.check_priv(ev,priv.SUPERUSER):
         update_local_data()
